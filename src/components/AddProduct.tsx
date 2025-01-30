@@ -31,6 +31,7 @@ function AddProduct() {
                 console.log(">>>>" +res.data);
                 if(res.status==HttpStatusCode.Ok){
                     console.log("Product Added Successfully" + res.data);
+                    alert("Product Added successfully");
                     navigate('/');
                 }
                 else {
