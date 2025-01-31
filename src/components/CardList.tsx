@@ -5,22 +5,21 @@ import Card from "./Card";
 import { HttpStatusCode } from "axios";
 
 import { useNavigate } from "react-router-dom";
+import { useProduct } from "../context/ProductContext";
 
 
 
 function CardList() {
     const [products, setProducts] = useState<Product[]>([]);
     const navigate = useNavigate();
-   
+    const { product } = useProduct();
     
     
 
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await api.get<Product[]>('/products');
-            console.log(response.data);
-
+            const response = await api.get<Product[]>('/products'); 
             setProducts(response.data);
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -28,36 +27,42 @@ function CardList() {
         };
     
         fetchData();
+        
       }, []);
-
+      useEffect(() => {
+        if (product) {
+          setProducts((prevProducts) => [product,...prevProducts ]); 
+        }
+        
+      }, [product]);
       
     
 
       const deleteItem = (id : number) => {
-        const fetchData = async () => {
-            try{
-                const res = await api.delete(`/products/${id}`);
-                if(res.status==HttpStatusCode.Ok){
-                    setProducts(products.filter(product => product.id!==id));
-                    
-                }
-            }
-            catch(err){
-                console.error(">>> "+err);
-            }
-        }
-
-        fetchData();
+        console.log(id);
+        
+        if(id>20)
+        {
+          setProducts(products.filter(product => product.id!==id));
+        
       }
-
-    
-
-  
-      
-    
-    
-
-
+      else {
+        const fetchData = async () => {
+          try{
+              const res = await api.delete(`/products/${id}`);
+              if(res.status==HttpStatusCode.Ok){
+                  setProducts(products.filter(product => product.id!==id));
+                  
+              }
+          }
+          catch(err){
+              console.error(">>> "+err);
+          }
+      }
+      fetchData();
+      }
+      console.log(products);
+      }
   return (
     <div>
         <div className="w-7/8 flex flex-col md:flex-row justify-end items-center mx-auto my-5">

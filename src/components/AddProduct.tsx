@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 
 import AddProductReq from '../types/AddProductReq';
 import { api } from '../config/ApiConfig';
-
 import { useNavigate } from 'react-router-dom';
+import { useProduct } from '../context/ProductContext';
+
+import Product from '../types/Product';
 
 function AddProduct() {
     const [title, setTitle] = useState<string>("");
@@ -13,6 +15,7 @@ function AddProduct() {
     const [category, setCategory] = useState<string>("");
     const [imageURL, setimageURL] = useState<string>("");
     const navigate = useNavigate();
+    const { setProduct } = useProduct();
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); 
         console.log(title,price,imageURL,desc)
@@ -31,6 +34,11 @@ function AddProduct() {
                 console.log(">>>>" +res.data);
                 if(res.status==HttpStatusCode.Ok){
                     console.log("Product Added Successfully" + res.data);
+                    const transformedProduct: Product = {
+                        ...res.data,
+                        rating: { rate: 0, count: 0 }, 
+                      };
+                    setProduct(transformedProduct);
                     alert("Product Added successfully");
                     navigate('/');
                 }
